@@ -4,26 +4,7 @@
       <div class="query_item">
         <div class="query_name">药品名称：</div>
         <div class="item">
-          <el-input v-model="name" placeholder="请输入名称" size="small"></el-input>
-        </div>
-      </div>
-      <div class="query_item">
-        <div class="query_name">供应商：</div>
-        <div class="item">
-          <el-input v-model="supplier" placeholder="请输入领用人" size="small"></el-input>
-        </div>
-      </div>
-      <div class="query_item">
-        <div class="query_name">日期：</div>
-        <div class="item">
-          <el-date-picker
-            v-model="catchDate"
-            size="small"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+          <el-input v-model="input" placeholder="请输入名称" size="small"></el-input>
         </div>
       </div>
       <div class="query_control">
@@ -34,7 +15,7 @@
       <el-table
         :data="tableData"
         size="small"
-        style="height: 100%">
+        style="width: 100%;height: 100%">
         <el-table-column
           type="index"
           label="序号"
@@ -78,56 +59,29 @@
         </el-table-column>
         <el-table-column
           prop="date"
-          label="数量"
+          label="入库数量"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.drawNum }}
+            {{ scope.row.warehouseNum }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
-          label="单价"
+          label="出库数量"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.unitPrice }}
+            {{ scope.row.outgoingNum }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
-          label="金额"
+          label="库存数量"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.money }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="供应商"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.supplier }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="日期"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.drawTime }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="送单号"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.sendOrderNo }}
+            {{ scope.row.inventoryNum }}
           </template>
         </el-table-column>
         <el-table-column
@@ -166,21 +120,15 @@
             name:'正牧烟水两用消毒剂（泰）',
             model:'500g×20袋/箱',
             unit:'袋',
-            unitPrice:'12',
-            money:'120',
-            drawNum:'10',
-            supplier:'张三',
-            drawTime:'2019-02-23',
-            sendOrderNo:'132165465464564546',
+            warehouseNum:'614',
+            outgoingNum:'580',
+            inventoryNum:'34',
             remarks:''
           }
         ],
         pageSize:10,
         currentPage:1,
         total:100,
-        catchDate:[],
-        supplier:'',
-        name:'',
       }
     },
     methods:{
@@ -208,9 +156,6 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
-      }
-      .query_item+.query_item{
-        margin-left: 5px;
       }
       .query_control{
         margin-left: 10px;

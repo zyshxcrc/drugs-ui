@@ -18,5 +18,34 @@ export default {
   text-align: center;
   color: #2c3e50;
   height: 100%;
+  overflow: hidden;
 }
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+  div{
+    box-sizing: border-box;
+  }
 </style>

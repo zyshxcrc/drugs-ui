@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="query_item">
-        <div class="query_name">供应商：</div>
+        <div class="query_name">领用人：</div>
         <div class="item">
-          <el-input v-model="supplier" placeholder="请输入领用人" size="small"></el-input>
+          <el-input v-model="receiver" placeholder="请输入领用人" size="small"></el-input>
         </div>
       </div>
       <div class="query_item">
@@ -105,11 +105,11 @@
         </el-table-column>
         <el-table-column
           prop="date"
-          label="供应商"
+          label="领用人"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.supplier }}
+            {{ scope.row.receiver }}
           </template>
         </el-table-column>
         <el-table-column
@@ -119,15 +119,6 @@
           min-width="20">
           <template slot-scope="scope">
             {{ scope.row.drawTime }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="送单号"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.sendOrderNo }}
           </template>
         </el-table-column>
         <el-table-column
@@ -169,9 +160,8 @@
             unitPrice:'12',
             money:'120',
             drawNum:'10',
-            supplier:'张三',
+            receiver:'张三',
             drawTime:'2019-02-23',
-            sendOrderNo:'132165465464564546',
             remarks:''
           }
         ],
@@ -179,7 +169,7 @@
         currentPage:1,
         total:100,
         catchDate:[],
-        supplier:'',
+        receiver:'',
         name:'',
       }
     },

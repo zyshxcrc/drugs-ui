@@ -2,28 +2,9 @@
   <div class="warehouse_mian">
     <div class="main_top">
       <div class="query_item">
-        <div class="query_name">药品名称：</div>
+        <div class="query_name">公司名称：</div>
         <div class="item">
-          <el-input v-model="name" placeholder="请输入名称" size="small"></el-input>
-        </div>
-      </div>
-      <div class="query_item">
-        <div class="query_name">供应商：</div>
-        <div class="item">
-          <el-input v-model="supplier" placeholder="请输入领用人" size="small"></el-input>
-        </div>
-      </div>
-      <div class="query_item">
-        <div class="query_name">日期：</div>
-        <div class="item">
-          <el-date-picker
-            v-model="catchDate"
-            size="small"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+          <el-input v-model="input" placeholder="请输入名称" size="small"></el-input>
         </div>
       </div>
       <div class="query_control">
@@ -34,7 +15,7 @@
       <el-table
         :data="tableData"
         size="small"
-        style="height: 100%">
+        style="width: 100%;height: 100%">
         <el-table-column
           type="index"
           label="序号"
@@ -60,74 +41,29 @@
         </el-table-column>
         <el-table-column
           prop="date"
-          label="规格型号"
+          label="联系电话"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.model }}
+            {{ scope.row.phone }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
-          label="单位"
+          label="地址"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.unit }}
+            {{ scope.row.address }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
-          label="数量"
+          label="创建日期"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.drawNum }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="单价"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.unitPrice }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="金额"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.money }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="供应商"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.supplier }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="日期"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.drawTime }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="送单号"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.sendOrderNo }}
+            {{ scope.row.createDate }}
           </template>
         </el-table-column>
         <el-table-column
@@ -164,23 +100,15 @@
           {
             code:'QKBYN',
             name:'正牧烟水两用消毒剂（泰）',
-            model:'500g×20袋/箱',
-            unit:'袋',
-            unitPrice:'12',
-            money:'120',
-            drawNum:'10',
-            supplier:'张三',
-            drawTime:'2019-02-23',
-            sendOrderNo:'132165465464564546',
+            phone:'4564654564644',
+            address:'山东省青岛市',
+            createDate:'614',
             remarks:''
           }
         ],
         pageSize:10,
         currentPage:1,
         total:100,
-        catchDate:[],
-        supplier:'',
-        name:'',
       }
     },
     methods:{
@@ -208,9 +136,6 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
-      }
-      .query_item+.query_item{
-        margin-left: 5px;
       }
       .query_control{
         margin-left: 10px;

@@ -8,12 +8,6 @@
         </div>
       </div>
       <div class="query_item">
-        <div class="query_name">供应商：</div>
-        <div class="item">
-          <el-input v-model="supplier" placeholder="请输入领用人" size="small"></el-input>
-        </div>
-      </div>
-      <div class="query_item">
         <div class="query_name">日期：</div>
         <div class="item">
           <el-date-picker
@@ -78,15 +72,6 @@
         </el-table-column>
         <el-table-column
           prop="date"
-          label="数量"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.drawNum }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
           label="单价"
           align="center"
           min-width="10">
@@ -96,38 +81,20 @@
         </el-table-column>
         <el-table-column
           prop="date"
-          label="金额"
+          label="所属公司"
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.money }}
+            {{ scope.row.company }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
-          label="供应商"
-          align="center"
-          min-width="10">
-          <template slot-scope="scope">
-            {{ scope.row.supplier }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="日期"
+          label="创建日期"
           align="center"
           min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.drawTime }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="送单号"
-          align="center"
-          min-width="20">
-          <template slot-scope="scope">
-            {{ scope.row.sendOrderNo }}
+            {{ scope.row.createDate }}
           </template>
         </el-table-column>
         <el-table-column
@@ -167,11 +134,8 @@
             model:'500g×20袋/箱',
             unit:'袋',
             unitPrice:'12',
-            money:'120',
-            drawNum:'10',
-            supplier:'张三',
-            drawTime:'2019-02-23',
-            sendOrderNo:'132165465464564546',
+            company:'山东正大',
+            createDate:'2019-02-23',
             remarks:''
           }
         ],
@@ -179,7 +143,7 @@
         currentPage:1,
         total:100,
         catchDate:[],
-        supplier:'',
+        receiver:'',
         name:'',
       }
     },
