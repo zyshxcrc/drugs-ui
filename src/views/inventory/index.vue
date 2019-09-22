@@ -15,6 +15,7 @@
       <el-table
         :data="tableData"
         size="small"
+        loading="tableLoading"
         style="width: 100%;height: 100%">
         <el-table-column
           type="index"
@@ -110,6 +111,7 @@
   </div>
 </template>
 <script>
+  import {getInventoryList} from '@/api/inventory'
   export default {
     name:'drugs-warehose',
     data(){
@@ -129,7 +131,11 @@
         pageSize:10,
         currentPage:1,
         total:100,
+        tableLoading:false
       }
+    },
+    created(){
+      this.fetchInventoryList()
     },
     methods:{
       handleSizeChange(val){
@@ -137,6 +143,14 @@
       },
       handleCurrentChange(val){
 
+      },
+      fetchInventoryList(){
+        this.tableLoading = true
+        getInventoryList().then(res=>{
+          console.info(res)
+          this.tableData = res
+          this.tableLoading = false
+        })
       }
     }
   }
