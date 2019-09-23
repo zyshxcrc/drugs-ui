@@ -15,7 +15,7 @@
       <el-table
         :data="tableData"
         size="small"
-        loading="tableLoading"
+        v-loading="tableLoading"
         style="width: 100%;height: 100%">
         <el-table-column
           type="index"
@@ -131,7 +131,8 @@
         pageSize:10,
         currentPage:1,
         total:100,
-        tableLoading:false
+        tableLoading:false,
+        input:''
       }
     },
     created(){
