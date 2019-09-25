@@ -1,5 +1,5 @@
 <template>
-  <div class="warehouse_mian">
+  <div class="company_mian">
     <div class="main_top">
       <div class="query_item">
         <div class="query_name">公司名称：</div>
@@ -98,20 +98,11 @@
     name:'drugs-warehose',
     data(){
       return {
-        tableData: [
-          {
-            code:'QKBYN',
-            name:'正牧烟水两用消毒剂（泰）',
-            phone:'4564654564644',
-            address:'山东省青岛市',
-            createDate:'614',
-            remarks:''
-          }
-        ],
+        tableData: [],
         pageSize:10,
         currentPage:1,
         total:100,
-        tableLoading:false
+        tableLoading:false,
       }
     },
     created(){
@@ -145,7 +136,7 @@
   }
 </script>
 <style lang="scss" scoped>
-  .warehouse_mian{
+  .company_mian{
     height: 100%;
     width: 100%;
     font-size: 14px;
