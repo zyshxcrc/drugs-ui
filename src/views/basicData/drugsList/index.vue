@@ -28,7 +28,8 @@
       <el-table
         :data="tableData"
         size="small"
-        style="height: 100%">
+        v-loading="tableLoading"
+        height="100%">
         <el-table-column
           type="index"
           label="序号"
@@ -40,7 +41,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.code }}
+            {{ scope.row.drugCode }}
           </template>
         </el-table-column>
         <el-table-column
@@ -49,25 +50,25 @@
           align="center"
           min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.name }}
+            {{ scope.row.drugName }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
           label="规格型号"
           align="center"
-          min-width="10">
+          min-width="15">
           <template slot-scope="scope">
-            {{ scope.row.model }}
+            {{ scope.row.drugModel }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
           label="单位"
           align="center"
-          min-width="10">
+          min-width="5">
           <template slot-scope="scope">
-            {{ scope.row.unit }}
+            {{ scope.row.drugUnit }}
           </template>
         </el-table-column>
         <el-table-column
@@ -83,16 +84,16 @@
           prop="date"
           label="所属公司"
           align="center"
-          min-width="10">
+          min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.company }}
+            {{ scope.row.company.companyName }}
           </template>
         </el-table-column>
         <el-table-column
           prop="date"
           label="创建日期"
           align="center"
-          min-width="20">
+          min-width="10">
           <template slot-scope="scope">
             {{ scope.row.createDate }}
           </template>
@@ -123,6 +124,7 @@
   </div>
 </template>
 <script>
+  import {getDrugList} from '@/api/drug'
   export default {
     name:'drugs-warehose',
     data(){
@@ -139,6 +141,7 @@
             remarks:''
           }
         ],
+        tableLoading:false,
         pageSize:10,
         currentPage:1,
         total:100,
@@ -147,12 +150,32 @@
         name:'',
       }
     },
+    created(){
+      this.fetchDrugList()
+    },
     methods:{
       handleSizeChange(val){
-
+        this.pageSize = val
+        this.fetchDrugList()
       },
       handleCurrentChange(val){
-
+        this.currentPage = val
+        this.fetchDrugList()
+      },
+      fetchDrugList(){
+        let params = {
+          currentPage:this.currentPage,
+          pageSize:this.pageSize
+        }
+        this.tableLoading = true
+        getDrugList(params).then(res=>{
+          console.info(res)
+          this.tableData = res.value.list
+          this.total = res.value.pagination.total
+          this.currentPage = res.value.pagination.currentPage
+          this.pageSize = res.value.pagination.pageSize
+          this.tableLoading = false
+        })
       }
     }
   }
