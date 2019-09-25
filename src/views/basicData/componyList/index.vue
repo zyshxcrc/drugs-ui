@@ -15,7 +15,8 @@
       <el-table
         :data="tableData"
         size="small"
-        style="width: 100%;height: 100%">
+        v-loading="tableLoading"
+        height="100%">
         <el-table-column
           type="index"
           label="序号"
@@ -27,7 +28,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.code }}
+            {{ scope.row.companyCode }}
           </template>
         </el-table-column>
         <el-table-column
@@ -36,7 +37,7 @@
           align="center"
           min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.name }}
+            {{ scope.row.companyName }}
           </template>
         </el-table-column>
         <el-table-column
@@ -92,6 +93,7 @@
   </div>
 </template>
 <script>
+  import {getCompanyList} from '@/api/company'
   export default {
     name:'drugs-warehose',
     data(){
@@ -109,14 +111,35 @@
         pageSize:10,
         currentPage:1,
         total:100,
+        tableLoading:false
       }
+    },
+    created(){
+      this.fetchCompanyList()
     },
     methods:{
       handleSizeChange(val){
-
+        this.pageSize = val
+        this.fetchCompanyList()
       },
       handleCurrentChange(val){
-
+        this.currentPage = val
+        this.fetchCompanyList()
+      },
+      fetchCompanyList(){
+        let params = {
+          currentPage:this.currentPage,
+          pageSize:this.pageSize
+        }
+        this.tableLoading = true
+        getCompanyList(params).then(res=>{
+          console.info(res)
+          this.tableData = res.value.list
+          this.total = res.value.pagination.total
+          this.currentPage = res.value.pagination.currentPage
+          this.pageSize = res.value.pagination.pageSize
+          this.tableLoading = false
+        })
       }
     }
   }
