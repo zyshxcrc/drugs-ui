@@ -4,7 +4,7 @@
       <div class="query_item">
         <div class="query_name">药品名称：</div>
         <div class="item">
-          <el-input v-model="name" placeholder="请输入名称" size="small"></el-input>
+          <el-input v-model="drugName" placeholder="请输入名称" size="small"></el-input>
         </div>
       </div>
       <div class="query_item">
@@ -20,6 +20,7 @@
             v-model="catchDate"
             size="small"
             type="daterange"
+            value-format="yyyy-MM-dd"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
@@ -27,14 +28,16 @@
         </div>
       </div>
       <div class="query_control">
-        <el-button type="primary" size="small">查询</el-button>
+        <el-button type="primary" size="small" @click="fetchWarehouseList">查询</el-button>
+        <el-button type="primary" size="small" @click="openCreate">新增</el-button>
       </div>
     </div>
     <div class="main_table">
       <el-table
         :data="tableData"
         size="small"
-        style="height: 100%">
+        v-loading="tableLoading"
+        height="100%">
         <el-table-column
           type="index"
           label="序号"
@@ -46,7 +49,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.code }}
+            {{ scope.row.drugCode }}
           </template>
         </el-table-column>
         <el-table-column
@@ -55,7 +58,7 @@
           align="center"
           min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.name }}
+            {{ scope.row.drugName }}
           </template>
         </el-table-column>
         <el-table-column
@@ -64,7 +67,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.model }}
+            {{ scope.row.drugModel }}
           </template>
         </el-table-column>
         <el-table-column
@@ -73,7 +76,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.unit }}
+            {{ scope.row.drugUnit }}
           </template>
         </el-table-column>
         <el-table-column
@@ -153,42 +156,259 @@
         :total="total">
       </el-pagination>
     </div>
+
+    <el-dialog title="新增" :visible.sync="dialogTableVisible"
+               class="warehouse_add"
+    >
+      <div slot="title" class="drug_main_title">{{dialogName}}</div>
+      <div class="main">
+        <div class="main_add">
+          <el-button type="primary" size="small" @click="openWarehouseAdd">新增</el-button>
+        </div>
+        <div class="main_table">
+          <el-table
+            :data="addWarehouseList"
+            stripe
+            height="100%">
+            <el-table-column
+              type="index"
+              label="序号"
+              align="center"
+            />
+            <el-table-column
+              prop="date"
+              label="编号"
+              align="center"
+              min-width="10">
+              <template slot-scope="scope">
+                {{ scope.row.drugCode }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="名称"
+              align="center"
+              min-width="20">
+              <template slot-scope="scope">
+                {{ scope.row.drugName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="规格型号"
+              align="center"
+              min-width="10">
+              <template slot-scope="scope">
+                {{ scope.row.drugModel }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="单位"
+              align="center"
+              min-width="10">
+              <template slot-scope="scope">
+                {{ scope.row.drugUnit }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="数量"
+              align="center"
+              min-width="10">
+              <template slot-scope="scope">
+                {{ scope.row.drawNum }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="单价"
+              align="center"
+              min-width="10">
+              <template slot-scope="scope">
+                {{ scope.row.unitPrice }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <el-dialog
+          width="30%"
+          title="内层 Dialog"
+          :visible.sync="innerVisible"
+          class="warehouse_add_form"
+          append-to-body>
+          <div slot="title" class="drug_main_title">{{dialogAddName}}</div>
+          <div class="main">
+            <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+              <el-form-item label="名称" size="small" prop="id">
+                <el-select v-model="form.id" placeholder="请选择药品" size="small" style="width: 100%;">
+                  <el-option
+                    v-for="item in drugList"
+                    :key="item.id"
+                    :label="item.drugCode+'-'+item.drugName"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="数量" size="small" prop="drowNum">
+                <el-input v-model="form.drowNum"></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="innerVisible = false">取 消</el-button>
+            <el-button v-if="dialogAddName==='新增'" type="primary" @click="addFormDrug">新 增</el-button>
+            <el-button v-else type="primary" @click="editFormDrug">修 改</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTableVisible = false">取 消</el-button>
+        <el-button v-if="dialogName==='新增'" type="primary" @click="addWarehouse">新 增</el-button>
+        <el-button v-else type="primary" @click="editDrug">修 改</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+  import {getWarehouseList,handleWarehouseCreate} from '@/api/inventory'
+  import {getAllCompanyList} from '@/api/company'
+  import {getAllDrugList} from '@/api/drug'
+  import {floatMul} from "../../util/util";
+
   export default {
     name:'drugs-warehose',
     data(){
       return {
-        tableData: [
-          {
-            code:'QKBYN',
-            name:'正牧烟水两用消毒剂（泰）',
-            model:'500g×20袋/箱',
-            unit:'袋',
-            unitPrice:'12',
-            money:'120',
-            drawNum:'10',
-            supplier:'张三',
-            drawTime:'2019-02-23',
-            sendOrderNo:'132165465464564546',
-            remarks:''
-          }
-        ],
+        tableData: [],
         pageSize:10,
         currentPage:1,
         total:100,
         catchDate:[],
         supplier:'',
-        name:'',
+        drugName:'',
+        tableLoading:false,
+        dialogTableVisible:false,
+        innerVisible:false,
+        dialogName:'新增',
+        addWarehouseList:[],
+        addWarehouseForm:{},
+        dialogAddName:'新增',
+        form:{
+          id:undefined,
+          drowNum:''
+        },
+        rules: {
+          drowNum: [
+            { required: true, message: '请输入入库数量', trigger: 'blur' }
+          ],
+          id: [
+            { required: true, message: '请选择药品', trigger: 'change' }
+          ]
+        },
+        drugList:[],
+        companyList:[],
       }
+    },
+    created(){
+      this.fetchWarehouseList()
+      this.fetchCompanyList()
+      this.fetchDrugList()
     },
     methods:{
       handleSizeChange(val){
-
+        this.pageSize = val
+        this.fetchWarehouseList()
       },
       handleCurrentChange(val){
+        this.currentPage = val
+        this.fetchWarehouseList()
+      },
+      fetchWarehouseList(){
+        let params = {
+          drugName:this.drugName,
+          startDate:this.catchDate.length>0?this.catchDate[0]:'',
+          endDate:this.catchDate.length>0?this.catchDate[1]:'',
+          currentPage:this.currentPage,
+          pageSize:this.pageSize
+        }
+        this.tableLoading = true
+        getWarehouseList(params).then(res=>{
+          console.info(res)
+          this.tableData = res.value.list
+          this.total = res.value.pagination.total
+          this.currentPage = res.value.pagination.currentPage
+          this.pageSize = res.value.pagination.pageSize
+          this.tableLoading = false
+        })
+      },
+      openCreate(){
+        this.addWarehouseList=[]
+        this.dialogName = '新增'
+        this.dialogTableVisible = true
+      },
+      openWarehouseAdd(){
+        this.innerVisible = true
+        this.form = {
+          id:undefined,
+          drowNum:''
+        }
+      },
+      fetchCompanyList(){
+        getAllCompanyList().then(res=>{
+          this.companyList = res.value.list
+        })
+      },
+      fetchDrugList(){
+        getAllDrugList().then(res=>{
+          this.drugList = res.value.list
+        })
+      },
+      addFormDrug(){
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            let drug = this.drugList.find(item=>item.id === this.form.id)
+            let addDrug = {
+              drugId:this.form.id,
+              ...drug,
+              drawNum:this.form.drowNum,
+              supplier:drug.company.id,
+              money:floatMul(drug.unitPrice,this.form.drowNum),
+              drawTime:this.$moment(new Date()).format('YYYY-MM-DD')
+            }
+            this.addWarehouseList = [...this.addWarehouseList,addDrug]
+            this.innerVisible = false
+          } else {
 
+          }
+        });
+      },
+      editFormDrug(){
+
+      },
+      addWarehouse(){
+        const loading = this.$loading({
+          lock: true,
+          text: '处理中，请稍候……',
+        });
+        handleWarehouseCreate(this.addWarehouseList).then(res=>{
+          console.info(res)
+          if(res.result){
+            this.$message({
+              message: '入库成功！！',
+              type: 'success'
+            });
+            this.dialogTableVisible = false
+            loading.close();
+            this.fetchWarehouseList()
+          }else{
+            loading.close();
+            this.$message({
+              message: '入库失败，请稍后再试！！',
+              type: 'error'
+            });
+          }
+        })
       }
     }
   }
@@ -221,6 +441,74 @@
     }
     .main_navigation{
       margin-top: 10px;
+    }
+
+    .warehouse_add{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /deep/ .el-dialog{
+        width: 1000px;
+        height: 800px;
+        margin: 0 !important;
+        .drug_main_title{
+          text-align: left;
+          font-size: 18px;
+        }
+        .el-dialog__body{
+          height: calc(100% - 124px);
+          .main{
+            height: 100%;
+            font-size: 12px;
+            padding: 0 10px;
+            .main_add{
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              margin-bottom: 10px;
+            }
+            .main_table{
+              height: calc(100% -50px);
+            }
+          }
+        }
+        .el-dialog__footer{
+          .dialog-footer{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+
+  .warehouse_add_form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /deep/ .el-dialog{
+      width: 600px;
+      height: 800px;
+      margin: 0 !important;
+      .drug_main_title{
+        text-align: left;
+        font-size: 18px;
+      }
+      .el-dialog__body{
+        height: calc(100% - 124px);
+        .main{
+          font-size: 12px;
+          padding: 0 10px;
+        }
+      }
+      .el-dialog__footer{
+        .dialog-footer{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
   }
 </style>

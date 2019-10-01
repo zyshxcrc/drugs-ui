@@ -4,11 +4,11 @@
       <div class="query_item">
         <div class="query_name">药品名称：</div>
         <div class="item">
-          <el-input v-model="input" placeholder="请输入名称" size="small"></el-input>
+          <el-input v-model="drugName" placeholder="请输入名称" size="small"></el-input>
         </div>
       </div>
       <div class="query_control">
-        <el-button type="primary" size="small">查询</el-button>
+        <el-button type="primary" size="small" @click="fetchInventoryList">查询</el-button>
       </div>
     </div>
     <div class="main_table">
@@ -28,7 +28,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.code }}
+            {{ scope.row.drug.drugCode }}
           </template>
         </el-table-column>
         <el-table-column
@@ -37,7 +37,7 @@
           align="center"
           min-width="20">
           <template slot-scope="scope">
-            {{ scope.row.name }}
+            {{ scope.row.drug.drugName }}
           </template>
         </el-table-column>
         <el-table-column
@@ -46,7 +46,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.model }}
+            {{ scope.row.drug.drugModel }}
           </template>
         </el-table-column>
         <el-table-column
@@ -55,7 +55,7 @@
           align="center"
           min-width="10">
           <template slot-scope="scope">
-            {{ scope.row.unit }}
+            {{ scope.row.drug.drugUnit }}
           </template>
         </el-table-column>
         <el-table-column
@@ -116,23 +116,12 @@
     name:'drugs-warehose',
     data(){
       return {
-        tableData: [
-          {
-            code:'QKBYN',
-            name:'正牧烟水两用消毒剂（泰）',
-            model:'500g×20袋/箱',
-            unit:'袋',
-            warehouseNum:'614',
-            outgoingNum:'580',
-            inventoryNum:'34',
-            remarks:''
-          }
-        ],
+        tableData: [],
         pageSize:10,
         currentPage:1,
         total:100,
         tableLoading:false,
-        input:''
+        drugName:'',
       }
     },
     created(){
@@ -140,16 +129,27 @@
     },
     methods:{
       handleSizeChange(val){
-
+        this.pageSize = val
+        this.fetchInventoryList()
       },
       handleCurrentChange(val){
-
+        this.currentPage = val
+        this.fetchInventoryList()
       },
       fetchInventoryList(){
+        let params = {
+          drugName:this.drugName,
+          // startDate:this.catchDate.length>0?this.catchDate[0]:'',
+          // endDate:this.catchDate.length>0?this.catchDate[1]:'',
+          currentPage:this.currentPage,
+          pageSize:this.pageSize
+        }
         this.tableLoading = true
-        getInventoryList().then(res=>{
-          console.info(res)
-          this.tableData = res
+        getInventoryList(params).then(res=>{
+          this.tableData = res.value.list
+          this.total = res.value.pagination.total
+          this.currentPage = res.value.pagination.currentPage
+          this.pageSize = res.value.pagination.pageSize
           this.tableLoading = false
         })
       }
