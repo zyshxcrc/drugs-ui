@@ -133,6 +133,15 @@
             {{ scope.row.remarks }}
           </template>
         </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          min-width="10">
+          <template slot-scope="scope">
+            <el-button @click="openEdit(scope.row)" type="text" size="small">编辑</el-button>
+            <!--<el-button @click="openEditFormDrug(scope.row)" type="text" size="small">编辑</el-button>-->
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="main_navigation">
@@ -243,7 +252,7 @@
               align="center"
               min-width="10">
               <template slot-scope="scope">
-                <el-button @click="deleteFormDrug(scope.row)" type="text" size="small">查看</el-button>
+                <el-button @click="deleteFormDrug(scope.row)" type="text" size="small">删除</el-button>
                 <el-button @click="openEditFormDrug(scope.row)" type="text" size="small">编辑</el-button>
               </template>
             </el-table-column>
@@ -296,10 +305,52 @@
         <el-button v-else type="primary" @click="editOutOfStack">修 改</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="30%"
+      title="内层 Dialog"
+      :visible.sync="dialogTableEditVisible"
+      class="out_of_stack_edit_form">
+      <div slot="title" class="drug_main_title">编辑</div>
+      <div class="main">
+        <el-form ref="editForm" :model="editForm" :rules="editRules" label-width="80px">
+          <el-form-item label="编号" size="small" prop="drugCode">
+            <el-input v-model="editForm.drugCode" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="名称" size="small" prop="drugName">
+            <el-input v-model="editForm.drugName" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="规格型号" size="small" prop="drugModel">
+            <el-input v-model="editForm.drugModel" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="单位" size="small" prop="drugUnit">
+            <el-input v-model="editForm.drugUnit" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="单价" size="small" prop="unitPrice">
+            <el-input v-model="editForm.unitPrice" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="数量" size="small" prop="drawNum">
+            <el-input v-model="editForm.drawNum"></el-input>
+          </el-form-item>
+          <el-form-item label="领用人" size="small" prop="receiverName">
+            <el-input v-model="editForm.receiverName" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="时间" size="small" prop="receiverName">
+            <el-input v-model="editForm.drawTime" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="备注" size="small" prop="receiverName">
+            <el-input v-model="editForm.remarks"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTableEditVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editOutOfStack">修 改</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import {getOutOfStackList,handleOutOfstackCreate} from '@/api/inventory'
+  import {getOutOfStackList,handleOutOfstackCreate,getItemById,handleOutOfstackUpdate} from '@/api/inventory'
   import {getAllCompanyList} from '@/api/company'
   import {getAllDrugList} from '@/api/drug'
   import {getAllReceiverList} from '@/api/receiver'
@@ -341,7 +392,27 @@
         drugList:[],
         companyList:[],
         receiverList:[],
-        drugNum:0
+        drugNum:0,
+        dialogTableEditVisible:false,
+        editForm:{
+          id:undefined,
+          drugId:undefined,
+          drugCode:'',
+          drugName:'',
+          drugModel:'',
+          drugUnit:'',
+          unitPrice:'',
+          drawNum:'',
+          receiver:'',
+          receiverName:'',
+          drawTime:'',
+          remarks:'',
+        },
+        editRules:{
+          drawNum:[
+            { required: true, message: '请输入入库数量', trigger: 'blur' }
+          ],
+        }
       }
     },
     created(){
@@ -381,6 +452,27 @@
         this.addOutOfStackList=[]
         this.dialogName = '新增'
         this.dialogTableVisible = true
+      },
+      openEdit(record){
+        getItemById({id:record.id}).then(res=>{
+          if(res.result){
+            this.editForm = {
+                id:res.value.outOfStackReceiver.id,
+              drugId:res.value.outOfStackReceiver.drugId,
+                drugCode:res.value.outOfStackReceiver.drugCode,
+                drugName:res.value.outOfStackReceiver.drugName,
+                drugModel:res.value.outOfStackReceiver.drugModel,
+                drugUnit:res.value.outOfStackReceiver.drugUnit,
+                unitPrice:res.value.outOfStackReceiver.unitPrice,
+                drawNum:res.value.outOfStackReceiver.drawNum,
+                drawTime:res.value.outOfStackReceiver.drawTime,
+                remarks:res.value.outOfStackReceiver.remarks,
+                receiver:res.value.outOfStackReceiver.receiver.id,
+                receiverName:res.value.outOfStackReceiver.receiver.receiverName
+            }
+            this.dialogTableEditVisible = true
+          }
+        })
       },
       openOutOfStackAdd(){
         this.innerVisible = true
@@ -467,7 +559,33 @@
         })
       },
       editOutOfStack(){
-
+        const loading = this.$loading({
+          lock: true,
+          text: '处理中，请稍候……',
+        });
+        handleOutOfstackUpdate(this.editForm).then(res=>{
+          if(res.result){
+            this.$message({
+              message: '修改成功！！',
+              type: 'success'
+            });
+            this.dialogTableEditVisible = false
+            loading.close();
+            this.fetchOutOfStackList()
+          }else{
+            loading.close();
+            this.$message({
+              message: '修改失败，请稍后再试！！',
+              type: 'error'
+            });
+          }
+        }).catch(()=>{
+          loading.close();
+          this.$message({
+            message: '修改失败，请稍后再试！！',
+            type: 'error'
+          });
+        })
       }
     }
   }
@@ -529,6 +647,35 @@
             .main_table{
               height: calc(100% -50px);
             }
+          }
+        }
+        .el-dialog__footer{
+          .dialog-footer{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .out_of_stack_edit_form{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /deep/ .el-dialog{
+        width: 500px;
+        height: 600px;
+        margin: 0 !important;
+        .drug_main_title{
+          text-align: left;
+          font-size: 18px;
+        }
+        .el-dialog__body{
+          height: calc(100% - 124px);
+          .main{
+            height: 100%;
+            font-size: 12px;
+            padding: 0 10px;
           }
         }
         .el-dialog__footer{
