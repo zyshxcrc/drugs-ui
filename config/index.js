@@ -4,7 +4,7 @@
 
 const path = require('path')
 
-let baseUrl = 'http://localhost:8080'
+let baseUrl = 'http://localhost:8080/api/'
 
 module.exports = {
   dev: {

@@ -217,9 +217,9 @@
           drugName: [
             { required: true, message: '请输入名称', trigger: 'blur' }
           ],
-          drugModel: [
-            { required: true, message: '请输入规格型号', trigger: 'blur' }
-          ],
+          // drugModel: [
+          //   { required: true, message: '请输入规格型号', trigger: 'blur' }
+          // ],
           drugUnit: [
             { required: true, message: '请选择单位', trigger: 'change' }
           ],
@@ -295,6 +295,9 @@
         }
         this.dialogName = '新增'
         this.dialogTableVisible = true
+        this.$nextTick(()=>{
+          this.$refs['form'].clearValidate()
+        })
       },
       createDrug(){
         this.$refs['form'].validate((valid) => {
@@ -338,6 +341,9 @@
           this.editDrugId = res.value.drug.id
           this.dialogName = '编辑'
           this.dialogTableVisible = true
+          this.$nextTick(()=>{
+            this.$refs['form'].clearValidate()
+          })
         })
       },
       editDrug(){

@@ -203,6 +203,9 @@
           remarks:''
         }
         this.dialogTableVisible = true
+        this.$nextTick(()=>{
+          this.$refs['form'].clearValidate()
+        })
       },
       createReceiver(){
         this.$refs['form'].validate((valid) => {

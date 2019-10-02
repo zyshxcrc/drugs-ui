@@ -62,7 +62,10 @@
     display: flex;
     .main-left{
       height: 100%;
-      width: 180px;
+      width: 201px;
+      .el-menu-vertical-demo{
+        height: 100%;
+      }
       .el-menu-vertical-demo:not(.el-menu--collapse) {
         /*width: 200px;*/
         min-height: 400px;
@@ -70,7 +73,7 @@
     }
     .main-right{
       height: 100%;
-      width: calc(100% - 180px);
+      width: calc(100% - 201px);
       .main-top{
         height: 80px;
       }
