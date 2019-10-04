@@ -128,6 +128,8 @@
 </template>
 <script>
   import {getReceiverList,handleCreate} from '@/api/receiver'
+  import {Throttle} from "../../../util/util";
+
   export default {
     name:'drugs-warehose',
     data(){
@@ -207,7 +209,7 @@
           this.$refs['form'].clearValidate()
         })
       },
-      createReceiver(){
+      createReceiver:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             handleCreate(this.form).then(res=>{
@@ -229,7 +231,7 @@
 
           }
         });
-      }
+      },2000)
     }
   }
 </script>

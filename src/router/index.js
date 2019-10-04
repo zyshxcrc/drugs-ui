@@ -20,6 +20,7 @@ export default new Router({
       children:[
         {
           path:"/",
+          redirect: '/inventory',
           component:HelloWorld
         },
         {

@@ -358,7 +358,7 @@
   import {getAllCompanyList} from '@/api/company'
   import {getAllDrugList} from '@/api/drug'
   import {getAllReceiverList} from '@/api/receiver'
-  import {floatMul} from "../../util/util";
+  import {floatMul,Throttle} from "../../util/util";
   export default {
     name:'drugs-warehose',
     data(){
@@ -518,7 +518,7 @@
           this.receiverList = res.value.list
         })
       },
-      addFormDrug(){
+      addFormDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             let drug = this.drugList.find(item=>item.id === this.form.id)
@@ -542,8 +542,8 @@
 
           }
         });
-      },
-      editFormDrug(){
+      },2000),
+      editFormDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             let drug = this.drugList.find(item=>item.id === this.form.id)
@@ -571,16 +571,16 @@
 
           }
         });
-      },
-      deleteFormDrug(record){
+      },2000),
+      deleteFormDrug:Throttle(function(record){
         console.info(record)
         console.info(this.addOutOfStackList)
         let index = this.addOutOfStackList.findIndex(item=>item.addId === record.addId)
         let newList = [...this.addOutOfStackList]
         newList.splice(index,1)
         this.addOutOfStackList = newList
-      },
-      addOutOfStack(){
+      },2000),
+      addOutOfStack:Throttle(function(){
         const loading = this.$loading({
           lock: true,
           text: '处理中，请稍候……',
@@ -603,8 +603,8 @@
             });
           }
         })
-      },
-      editOutOfStack(){
+      },2000),
+      editOutOfStack:Throttle(function(){
         const loading = this.$loading({
           lock: true,
           text: '处理中，请稍候……',
@@ -635,8 +635,8 @@
             type: 'error'
           });
         })
-      },
-      deleteOutOfStack(record){
+      },2000),
+      deleteOutOfStack:Throttle(function(record){
         this.$confirm('此操作将永久删除该出库记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -669,7 +669,7 @@
             });
           })
         });
-      },
+      },2000),
       getSummaries(param) {
         const { columns, data } = param;
         const sums = [];
@@ -689,7 +689,7 @@
 
         return sums;
       },
-      excelExport(){
+      excelExport:Throttle(function(){
         const url = '/api/outOfStack/ExcelDownload?drugName='+this.drugName
           +'&receiverName='+this.receiverName
           +'&startDate='+(this.catchDate.length>0?this.catchDate[0]:'')
@@ -702,7 +702,7 @@
         a.click()
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
-      }
+      },2000)
     }
   }
 </script>

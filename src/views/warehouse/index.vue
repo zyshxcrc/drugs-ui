@@ -331,7 +331,7 @@
   import {getWarehouseList,handleWarehouseCreate,getWarehouseById,handleWarehouseUpdate,handleWarehouseDelete} from '@/api/inventory'
   import {getAllCompanyList} from '@/api/company'
   import {getAllDrugList} from '@/api/drug'
-  import {floatMul} from "../../util/util";
+  import {floatMul,Throttle} from "../../util/util";
 
   export default {
     name:'drugs-warehose',
@@ -494,7 +494,7 @@
           this.drugList = res.value.list
         })
       },
-      addFormDrug(){
+      addFormDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             let drug = this.drugList.find(item=>item.id === this.form.id)
@@ -514,8 +514,8 @@
 
           }
         });
-      },
-      editFormDrug(){
+      },2000),
+      editFormDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             let drug = this.drugList.find(item=>item.id === this.form.id)
@@ -541,16 +541,16 @@
 
           }
         });
-      },
-      deleteFormDrug(record){
+      },2000),
+      deleteFormDrug:Throttle(function(record){
         console.info(record)
         console.info(this.addWarehouseList)
         let index = this.addWarehouseList.findIndex(item=>item.addId === record.addId)
         let newList = [...this.addWarehouseList]
         newList.splice(index,1)
         this.addWarehouseList = newList
-      },
-      addWarehouse(){
+      },2000),
+      addWarehouse:Throttle(function(){
         const loading = this.$loading({
           lock: true,
           text: '处理中，请稍候……',
@@ -573,8 +573,8 @@
             });
           }
         })
-      },
-      editWarehouse(){
+      },2000),
+      editWarehouse:Throttle(function(){
         const loading = this.$loading({
           lock: true,
           text: '处理中，请稍候……',
@@ -605,8 +605,8 @@
             type: 'error'
           });
         })
-      },
-      deleteWarehouse(record){
+      },2000),
+      deleteWarehouse:Throttle(function(record){
         this.$confirm('此操作将永久删除该入库记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -639,7 +639,7 @@
             });
           })
         });
-      }
+      },2000)
     }
   }
 </script>

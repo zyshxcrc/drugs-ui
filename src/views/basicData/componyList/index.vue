@@ -139,6 +139,8 @@
 </template>
 <script>
   import {getCompanyList,handleCreate,getCompanyDetail,handleEdit} from '@/api/company'
+  import {Throttle} from "../../../util/util";
+
   export default {
     name:'drugs-warehose',
     data(){
@@ -242,7 +244,7 @@
           })
         })
       },
-      createCompany(){
+      createCompany:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             handleCreate({
@@ -266,8 +268,8 @@
 
           }
         });
-      },
-      editCompany(){
+      },2000),
+      editCompany:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             handleEdit({
@@ -292,7 +294,7 @@
 
           }
         });
-      }
+      },2000)
     }
   }
 </script>

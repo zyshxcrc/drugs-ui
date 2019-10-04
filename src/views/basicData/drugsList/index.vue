@@ -193,6 +193,8 @@
 <script>
   import {getDrugList,handleCreate,getDrugDetail,handleEdit} from '@/api/drug'
   import {getAllCompanyList} from '@/api/company'
+  import {Throttle} from "../../../util/util";
+
   export default {
     name:'drugs-warehose',
     data(){
@@ -299,7 +301,7 @@
           this.$refs['form'].clearValidate()
         })
       },
-      createDrug(){
+      createDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             handleCreate({
@@ -324,8 +326,8 @@
 
           }
         });
-      },
-      fetchDrugById(record){
+      },2000),
+      fetchDrugById:Throttle(function(record){
         getDrugDetail({id:record.id}).then(res=>{
           console.info(res)
           this.form = {
@@ -345,8 +347,8 @@
             this.$refs['form'].clearValidate()
           })
         })
-      },
-      editDrug(){
+      },2000),
+      editDrug:Throttle(function(){
         this.$refs['form'].validate((valid) => {
           if (valid) {
             handleEdit({
@@ -372,7 +374,7 @@
 
           }
         });
-      }
+      },2000)
     }
   }
 </script>
